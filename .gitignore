@@ -2,6 +2,7 @@
 #	Compiled Source	#
 ###################
 *.pdf
+*.class
 
 ###################
 #	Directories			#
