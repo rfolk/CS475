@@ -15,6 +15,9 @@ public class Search
 	/* The binary relation succ over sigma is a vector of pairs of integers */
 	static Vector succ = new Vector<int[]> () ;
 
+	/*	Hashmap Size for hashing function	*/
+	static int hashSize = 16 ;
+
 	/**
 		* printSearchGraph displays the binary relation succ on the screen
 		* using the format: start -->> end to say that (start, end) belongs
@@ -84,7 +87,61 @@ public class Search
 		*/
 	public static void bfs ( int init , int goal )
 	{
+		//	Initialize Frontier
+		Queue<SearchNode> frontier = new LinkedList<SearchNode>() ;
+		//	Initialize Explored
+		HashMap explored = new HashMap ( hashSize ) ;
+		//	Add initial node
+		frontier.add( new SearchNode ( init ) ) ;
+		int nodesCreated = 1 ;
+		int statesVisited = 0 ;
 
+		while ( !frontier.isEmpty() )
+		{
+			SearchNode node = frontier.remove() ;
+			if ( node.getState() == goal )
+			{
+				System.out.print ( "Path is: " ) ;
+				SearchNode path = node ;
+				while ( path.getParent() != null )
+				{
+					System.out.print ( path.getState() + " <- " ) ;
+					path = path.getParent() ;
+				}
+				System.out.println( path.getState() ) ;
+				while ( node != null )
+				{
+					System.out.println ( node ) ;
+					node = node.getParent() ;
+				}
+				System.out.println ( "Created " + nodesCreated + " nodes." ) ;
+				System.out.println ( "Visited " + statesVisited + " states." ) ;
+				return ;
+			}
+			else
+			{
+				explored.put ( node.getState() % hashSize , node.getState() ) ;
+				nodesCreated++ ;
+
+				Iterator<int[]> itSucc = succ.iterator() ;
+
+				for ( ; itSucc.hasNext() ; )
+				{
+					int[] pair = itSucc.next() ;
+					if ( pair[0] == node.getState() )
+					{
+						if ( explored.get( pair[1] % hashSize ) != pair[1] )
+						{
+							frontier.add( new SearchNode ( pair[1] , node ) ) ;
+							statesVisited++ ;
+						}
+					}
+				}
+			}
+		}
+		System.out.println ( "FALSE" ) ;
+		System.out.println ( "Created " + nodesCreated + " nodes." ) ;
+		System.out.println ( "Visited " + statesVisited + " states." ) ;
 	}
 
 	/**
@@ -103,7 +160,7 @@ public class Search
 		*/
 	public static void dfs ( int init , int goal )
 	{
-
+		Stack<SearchNode> frontier ;
 	}
 
 	public static void main ( String[] args ) throws IOException
