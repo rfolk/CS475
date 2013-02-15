@@ -101,7 +101,7 @@ public class Search
 			SearchNode node = frontier.remove() ;
 			if ( node.getState() == goal )
 			{
-				System.out.print ( "Path is: " ) ;
+				System.out.print ( "A path exists!\n\t" ) ;
 				SearchNode path = node ;
 				while ( path.getParent() != null )
 				{
@@ -109,13 +109,8 @@ public class Search
 					path = path.getParent() ;
 				}
 				System.out.println( path.getState() ) ;
-				while ( node != null )
-				{
-					System.out.println ( node ) ;
-					node = node.getParent() ;
-				}
-				System.out.println ( "Created " + nodesCreated + " nodes." ) ;
-				System.out.println ( "Visited " + statesVisited + " states." ) ;
+				System.out.println ( "\n\tCreated " + nodesCreated + " nodes." ) ;
+				System.out.println ( "\tVisited " + statesVisited + " states.\n" ) ;
 				return ;
 			}
 			else
@@ -174,7 +169,7 @@ public class Search
 			SearchNode node = frontier.pop() ;
 			if ( node.getState() == goal )
 			{
-				System.out.print ( "Path is: " ) ;
+				System.out.print ( "A path exists!\n\t" ) ;
 				SearchNode path = node ;
 				while ( path.getParent() != null )
 				{
@@ -182,13 +177,8 @@ public class Search
 					path = path.getParent() ;
 				}
 				System.out.println( path.getState() ) ;
-				while ( node != null )
-				{
-					System.out.println ( node ) ;
-					node = node.getParent() ;
-				}
-				System.out.println ( "Created " + nodesCreated + " nodes." ) ;
-				System.out.println ( "Visited " + statesVisited + " states." ) ;
+				System.out.println ( "\n\tCreated " + nodesCreated + " nodes." ) ;
+				System.out.println ( "\tVisited " + statesVisited + " states." ) ;
 				return ;
 			}
 			else
@@ -225,7 +215,7 @@ public class Search
 		printSearchGraph () ;
 		int init = Integer.valueOf ( args[1] ) ;
 		int goal = Integer.valueOf ( args[2] ) ;
-		System.out.println ( "Call BFS: from " + init + " to " + goal ) ;
+		System.out.println ( "\nCall BFS: from " + init + " to " + goal ) ;
 		bfs ( init , goal ) ;
 		System.out.println ( "Call DFS: from " + init + " to " + goal ) ;
 		dfs ( init , goal ) ;
