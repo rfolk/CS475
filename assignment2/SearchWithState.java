@@ -36,7 +36,7 @@ public class SearchWithState
 	 *    The number of states that the search visited      *
 	 */
 
-	public static void astar ( State init , State goal )
+	public static void astar ( State init , State goal , int h )
 	{
 		Comparator<NodeWithState> comparator = new StateComparator() ;
 		PriorityQueue<NodeWithState> frontier = new PriorityQueue<NodeWithState> ( 10 , comparator ) ;
@@ -44,8 +44,14 @@ public class SearchWithState
 
 		boolean found = false ;
 		NodeWithState first = new NodeWithState( init ) ;
-		//if ( init.getHeuristic() == -1 )
-		//	init.evaluate( goal ) ;
+		if ( init.getHeuristic() == -1 )
+		{
+			if ( h == 0 )
+				init.misplaced() ;
+			else
+				init.evaluate( goal ) ;
+		}
+
 
 		frontier.add( first ) ;
 
@@ -85,7 +91,10 @@ public class SearchWithState
 						{
 							// System.out.println("Adding node with heuristic "+ n.computeHeuristic(goal) +" state \n"+n.toString()) ;
 							nodesExpanded++ ;
-							n.evaluate( goal ) ;
+							if ( h == 0 )
+								n.misplaced() ;
+							else
+								n.evaluate( goal ) ;
 							NodeWithState next = new NodeWithState ( n , cur , i ) ;
 							frontier.add( next ) ;
 						}
@@ -100,7 +109,7 @@ public class SearchWithState
 		//System.out.println( "Explored: " + nodesExplored + " Expanded: " + nodesExpanded ) ;
 	}
 
-	public static void gbfs ( State init , State goal )
+	public static void gbfs ( State init , State goal , int h )
 	{
 		Comparator<NodeWithState> comparator	= new GBFSStateComparator() ;
 		PriorityQueue<NodeWithState> frontier	= new PriorityQueue<NodeWithState> ( 10 , comparator ) ;
@@ -109,8 +118,13 @@ public class SearchWithState
 		boolean found				= false ;
 		NodeWithState first	= new NodeWithState ( init ) ;
 
-		//if ( init.getHeuristic() == -1 )
-		//	init.evaluate( goal ) ;
+		if ( init.getHeuristic() == -1 )
+		{
+			if ( h == 0 )
+				init.misplaced() ;
+			else
+				init.evaluate( goal ) ;
+		}
 
 		frontier.add( first ) ;
 
@@ -129,7 +143,7 @@ public class SearchWithState
 				if ( curState.equal( goal ) == true )
 				{
 					//System.out.println( "Path: " + cur.printSolution().toString() ) ;
-					//	part of table, change to print
+					//	part of table
 					System.out.println( cur.pathLength() + "\t\t" + nodesExplored +
 															"\t\t\t" + nodesExpanded ) ;
 					found = true ;
@@ -142,7 +156,10 @@ public class SearchWithState
 						if ( n.equal( curState ) == false && isVisited( visited , n ) == false )
 						{
 							nodesExpanded++ ;
-							n.evaluate( goal ) ;
+							if ( h == 0 )
+								n.misplaced() ;
+							else
+								n.evaluate( goal ) ;
 							NodeWithState next = new NodeWithState ( n , cur , i ) ;
 							frontier.add( next ) ;
 						}
@@ -157,24 +174,17 @@ public class SearchWithState
 
 	public static void main ( String[] args )
 	{
-		// TODO Auto-generated method stub
-
 		State goal = new State ( 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 0 ) ;
-		//State init = new State ( 1 , 2 , 3 , 4 , 0 , 6 , 7 , 8 , 5 ) ;
 
 		//	easy
 		State init = new State ( 1 , 2 , 3 , 0 , 4 , 5 , 6 , 7 , 8 ) ;
-		//State init = new State ( 1 , 2 , 3 , 4 , 5 , 6 , 8 , 7 , 0 ) ;
-		//State init = new State ( 1 , 2 , 3 , 0 , 4 , 5 , 7 , 8 , 6 ) ;
 
-		//astar ( init , goal ) ;
-		//gbfs  ( init , goal ) ;
-
-		//System.out.println ( "\n\nSimple Heuristic\n\n" ) ;
-		//init.misplaced() ;
-
-		//astar ( init , goal ) ;
-		//gbfs  ( init , goal ) ;
+		runTests ( init , goal ) ;
+		init = new State ( 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 ) ;
+		runTests ( init , goal ) ;
+		init = new State ( 1 , 0 , 2 , 3 , 4 , 5 , 6 , 7 , 8 ) ;
+		runTests ( init , goal ) ;
+		init = new State ( 0 , 2 , 3 , 1 , 4 , 5 , 6 , 7 , 8 ) ;
 		runTests ( init , goal ) ;
 	}
 	public static void runTests ( State init , State goal )
@@ -182,21 +192,16 @@ public class SearchWithState
 		System.out.print( "Method\t\tHeuristic\tPlan length\t#Nodes Explored\t" ) ;
 		System.out.println( "\t#Nodes Expanded" ) ;
 		//	Set up for Misplaced Heuristic
-		init.misplaced() ;
-		//	Change to print
 		System.out.print( "Greedy BFS\tMisplaced\t\t" ) ;
-		gbfs  ( init , goal ) ;
-		//	Change to print
+		gbfs  ( init , goal , 0 ) ;
 		System.out.print( "A-Star\t\tMisplaced\t\t" ) ;
-		astar ( init , goal ) ;
+		astar ( init , goal , 0 ) ;
 
 		//	Set up for Manhattan Heuristic
-		init.evaluate( goal ) ;
-		//	Change to print
 		System.out.print( "Greedy BFS\tManhatten\t\t" ) ;
-		gbfs  ( init , goal ) ;
-		//	Change to print
+		gbfs  ( init , goal , 1 ) ;
 		System.out.print( "A-Star\t\tManhatten\t\t" ) ;
-		astar ( init , goal ) ;
+		astar ( init , goal , 1 ) ;
+		System.out.println() ;
 	}
 }

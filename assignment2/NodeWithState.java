@@ -122,6 +122,10 @@ public class NodeWithState
 		}
 		return path ;
 	}
+
+	/**
+		*	Returns the length of the solution path.
+		*/
 	public int pathLength ()
 	{
 		int length = 0 ;

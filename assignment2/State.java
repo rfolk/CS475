@@ -176,6 +176,22 @@ public class State
 				d += distance ( goal.content[ i ][ j ] , i , j ) ;
 		heuristic = d ;
 	}
+
+	/**
+		*	Number of Misplaced Tiles
+		*
+		*	This will count the number of misplaced tiles in the 8-squares board and
+		*	set that result as the heuristic.
+		*	Ideally the board should look like:
+		*	 1 | 2 | 3
+		* ---|---|---
+		*	 4 | 5 | 6
+		*	---|---|---
+		*	 7 | 8 | 0
+		*	0 represents a "blank tile"
+		*	any square that does not match this layout will add 1 to the number of
+		*	displaced tiles.
+		*/
 	public void misplaced ()
 	{
 		int d = 0 ;
