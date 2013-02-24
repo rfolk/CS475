@@ -44,10 +44,10 @@ public class SearchWithState
 
 		boolean found = false ;
 		NodeWithState first = new NodeWithState( init ) ;
-		if ( init.getHeuristic() == -1 )
-			init.evaluate( goal ) ;
+		//if ( init.getHeuristic() == -1 )
+		//	init.evaluate( goal ) ;
 
-		frontier.add(first) ;
+		frontier.add( first ) ;
 
 		int nodesExplored = 0 ;
 		int nodesExpanded = 1 ;
@@ -57,10 +57,10 @@ public class SearchWithState
 			// pick the head of the queue
 			NodeWithState cur = frontier.poll() ;
 			State curState = cur.getState() ;
-			System.out.println ( "Exploring node with (A*) heuristic " +
+			/*System.out.println ( "Exploring node with (A*) heuristic " +
 				( cur.getHeuristic() + cur.getDepth() ) + " heuristic of state " +
 				curState.getHeuristic() + " at depth " + cur.getDepth() +
-				" with state \n" + curState.toString() ) ;
+				" with state \n" + curState.toString() ) ;*/
 			nodesExplored++ ;
 
 			// check if the state has been visited
@@ -70,7 +70,10 @@ public class SearchWithState
 				visited.addElement( curState ) ;
 				if ( curState.equal( goal ) == true )
 				{
-					System.out.println( "Path: " + cur.printSolution().toString() ) ;
+					//System.out.println( "Path: " + cur.printSolution().toString() ) ;
+					//	part of table, change to print
+					System.out.println( cur.pathLength() + "\t\t" + nodesExplored +
+															"\t\t\t" + nodesExpanded ) ;
 					found = true ;
 				}
 				else
@@ -81,9 +84,9 @@ public class SearchWithState
 						if ( n.equal( curState ) == false && isVisited( visited , n ) == false )
 						{
 							// System.out.println("Adding node with heuristic "+ n.computeHeuristic(goal) +" state \n"+n.toString()) ;
-							nodesExpanded ++ ;
+							nodesExpanded++ ;
 							n.evaluate( goal ) ;
-							NodeWithState next = new NodeWithState( n , cur , i ) ;
+							NodeWithState next = new NodeWithState ( n , cur , i ) ;
 							frontier.add( next ) ;
 						}
 					}
@@ -94,7 +97,62 @@ public class SearchWithState
 		if ( found == false )
 			System.out.println( "FALSE - No path from " + init + " to " +  goal ) ;
 
-		System.out.println( "Explored: " + nodesExplored + " Expanded: " + nodesExpanded ) ;
+		//System.out.println( "Explored: " + nodesExplored + " Expanded: " + nodesExpanded ) ;
+	}
+
+	public static void gbfs ( State init , State goal )
+	{
+		Comparator<NodeWithState> comparator	= new GBFSStateComparator() ;
+		PriorityQueue<NodeWithState> frontier	= new PriorityQueue<NodeWithState> ( 10 , comparator ) ;
+		Vector visited												= new Vector<State> () ;
+
+		boolean found				= false ;
+		NodeWithState first	= new NodeWithState ( init ) ;
+
+		//if ( init.getHeuristic() == -1 )
+		//	init.evaluate( goal ) ;
+
+		frontier.add( first ) ;
+
+		int nodesExplored = 0 ;
+		int nodesExpanded = 1 ;
+
+		while ( frontier.peek() != null && found == false )
+		{
+			NodeWithState cur	= frontier.poll() ;
+			State curState		= cur.getState() ;
+			nodesExplored++ ;
+
+			if ( isVisited ( visited , curState ) == false )
+			{
+				visited.addElement( curState ) ;
+				if ( curState.equal( goal ) == true )
+				{
+					//System.out.println( "Path: " + cur.printSolution().toString() ) ;
+					//	part of table, change to print
+					System.out.println( cur.pathLength() + "\t\t" + nodesExplored +
+															"\t\t\t" + nodesExpanded ) ;
+					found = true ;
+				}
+				else
+				{
+					for ( int i = 1 ; i < 5 ; i++ )
+					{
+						State n = curState.execution( i ) ;
+						if ( n.equal( curState ) == false && isVisited( visited , n ) == false )
+						{
+							nodesExpanded++ ;
+							n.evaluate( goal ) ;
+							NodeWithState next = new NodeWithState ( n , cur , i ) ;
+							frontier.add( next ) ;
+						}
+					}
+				}
+			}
+		}
+		if ( found == false )
+			System.out.println( "FALSE - No path from " + init + " to " +  goal ) ;
+		//System.out.println( "Explored: " + nodesExplored + " Expanded: " + nodesExpanded ) ;
 	}
 
 	public static void main ( String[] args )
@@ -106,8 +164,39 @@ public class SearchWithState
 
 		//	easy
 		State init = new State ( 1 , 2 , 3 , 0 , 4 , 5 , 6 , 7 , 8 ) ;
+		//State init = new State ( 1 , 2 , 3 , 4 , 5 , 6 , 8 , 7 , 0 ) ;
 		//State init = new State ( 1 , 2 , 3 , 0 , 4 , 5 , 7 , 8 , 6 ) ;
 
+		//astar ( init , goal ) ;
+		//gbfs  ( init , goal ) ;
+
+		//System.out.println ( "\n\nSimple Heuristic\n\n" ) ;
+		//init.misplaced() ;
+
+		//astar ( init , goal ) ;
+		//gbfs  ( init , goal ) ;
+		runTests ( init , goal ) ;
+	}
+	public static void runTests ( State init , State goal )
+	{
+		System.out.print( "Method\t\tHeuristic\tPlan length\t#Nodes Explored\t" ) ;
+		System.out.println( "\t#Nodes Expanded" ) ;
+		//	Set up for Misplaced Heuristic
+		init.misplaced() ;
+		//	Change to print
+		System.out.print( "Greedy BFS\tMisplaced\t\t" ) ;
+		gbfs  ( init , goal ) ;
+		//	Change to print
+		System.out.print( "A-Star\t\tMisplaced\t\t" ) ;
+		astar ( init , goal ) ;
+
+		//	Set up for Manhattan Heuristic
+		init.evaluate( goal ) ;
+		//	Change to print
+		System.out.print( "Greedy BFS\tManhatten\t\t" ) ;
+		gbfs  ( init , goal ) ;
+		//	Change to print
+		System.out.print( "A-Star\t\tManhatten\t\t" ) ;
 		astar ( init , goal ) ;
 	}
 }

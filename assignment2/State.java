@@ -168,12 +168,21 @@ public class State
 	}
 
 	// evaluate the state and compute the heuristic value of the state
-	public void evaluate(State goal)
+	public void evaluate ( State goal )
 	{
 		int d = 0 ;
 		for ( int i = 0 ; i < 3 ; i++ )
-			for (int j=0; j < 3; j++ )
+			for ( int j = 0 ; j < 3 ; j++ )
 				d += distance ( goal.content[ i ][ j ] , i , j ) ;
+		heuristic = d ;
+	}
+	public void misplaced ()
+	{
+		int d = 0 ;
+		for ( int i = 0 ; i < 3 ; i++ )
+			for ( int j = 0 ; j < 3 ; j++ )
+				if ( ( content[ i ][ j ] != ( 3 * i + j + 1 ) ) && ( ( 3 * i + j + 1 ) != 9 ) )
+					d++ ;
 		heuristic = d ;
 	}
 

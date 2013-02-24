@@ -122,6 +122,17 @@ public class NodeWithState
 		}
 		return path ;
 	}
+	public int pathLength ()
+	{
+		int length = 0 ;
+		NodeWithState cur = this ;
+		while ( cur.parent != null )
+		{
+			length++ ;
+			cur = cur.parent ;
+		}
+		return length ;
+	}
 
 	// method - returns a string representation of the node
 	public String toString ()
