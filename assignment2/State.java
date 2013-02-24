@@ -9,7 +9,7 @@ import java.util.* ;
 public class State
 {
 
-	private int[][] content ;	// the configuration of the state
+	private int[ ][ ] content ;	// the configuration of the state
 	private int heuristic ;		// the heuristic value of the state
 
 	/*
@@ -24,23 +24,24 @@ public class State
 	 */
 	public State ( int a, int b, int c, int d, int e, int f, int g, int h, int i )
 	{
-		content = new int[3][3] ;
-		content[0][0] = a ;
-		content[0][1] = b ;
-		content[0][2] = c ;
-		content[1][0] = d ;
-		content[1][1] = e ;
-		content[1][2] = f ;
-		content[2][0] = g ;
-		content[2][1] = h ;
-		content[2][2] = i ;
+		content = new int[ 3 ][ 3 ] ;
+		content[ 0 ][ 0 ] = a ;
+		content[ 0 ][ 1 ] = b ;
+		content[ 0 ][ 2 ] = c ;
+		content[ 1 ][ 0 ] = d ;
+		content[ 1 ][ 1 ] = e ;
+		content[ 1 ][ 2 ] = f ;
+		content[ 2 ][ 0 ] = g ;
+		content[ 2 ][ 1 ] = h ;
+		content[ 2 ][ 2 ] = i ;
 		heuristic = -1 ;
 	}
 
 	// an empty state
-	public State()
+	public State ()
 	{
-		this ( null , null , null , null , null , null , null , null , null ) ;
+		content   = new int[ 3 ][ 3 ] ;
+		heuristic = -1 ;
 	}
 
 	// copy a state
