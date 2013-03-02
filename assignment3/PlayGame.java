@@ -159,7 +159,21 @@ public class PlayGame
 		*/
 	public static int [] minvalue ( State s )
 	{
+		if ( s.terminal == false )
+			return s.utility () ;
 
+		Vector actions = new Vector< int[] > () ;
+		actions = s.action () ;
+		int score = Integer.MAX_VALUE ;
+		int [] move = new int [ 2 ] ;
+		for ( int i = 0 ; i < actions.size () ; i ++ )
+		{
+			move = actions.get ( i ) ;
+			int temp = maxvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ;
+			if ( temp < score )
+				score = temp ;
+		}
+		return score ;
 	}
 
 	/*
@@ -167,9 +181,23 @@ public class PlayGame
 			or maxvalue for alpha-beta search  - again,
 			change int[] to anything that you feel it should be
 		*/
-	public static int [] maxvalue ( State s )
+	public static int maxvalue ( State s )
 	{
+		if ( s.terminal == false )
+			return s.utility () ;
 
+		Vector actions = new Vector< int[] > () ;
+		actions = s.action () ;
+		int score = Integer.MIN_VALUE ;
+		int [] move = new int [ 2 ] ;
+		for ( int i = 0 ; i < actions.size () ; i ++ )
+		{
+			move = actions.get ( i ) ;
+			int temp = minvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ;
+			if ( temp > score )
+				score = temp ;
+		}
+		return score ;
 	}
 
 	/**
