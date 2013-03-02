@@ -133,16 +133,16 @@ public class PlayGame
 			*	Psuedo code
 			*	return max of min(result(state,a)) of all actions
 			*/
-		Vector actions = new Vector< int[] > () ;
+		Vector< int [] > actions = new Vector< int[] > () ;
 		actions = s.action () ;
 		int score = Integer.MIN_VALUE ;
 		int [] best = new int [ 2 ] ;
 		int [] move = new int [ 2 ] ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			move = actions.get ( i ) ;
-			int temp = maxvalue (
-								 minvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
+			move = actions.elementAt ( i ) ;
+			int temp = maxvalue ( s.result (
+								 						s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
 			if ( temp > score )
 			{
 				best = move ;
@@ -157,19 +157,20 @@ public class PlayGame
 			or minvalue for alpha-beta search  - again,
 			change int[] to anything that you feel it should be
 		*/
-	public static int [] minvalue ( State s )
+	public static int minvalue ( State s )
 	{
-		if ( s.terminal == false )
+		if ( s.terminal () == false )
 			return s.utility () ;
 
-		Vector actions = new Vector< int[] > () ;
+		Vector< int [] > actions = new Vector< int[] > () ;
 		actions = s.action () ;
 		int score = Integer.MAX_VALUE ;
 		int [] move = new int [ 2 ] ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			move = actions.get ( i ) ;
-			int temp = maxvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ;
+			move = actions.elementAt ( i ) ;
+			int temp = maxvalue ( s.result (
+														s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
 			if ( temp < score )
 				score = temp ;
 		}
@@ -183,17 +184,18 @@ public class PlayGame
 		*/
 	public static int maxvalue ( State s )
 	{
-		if ( s.terminal == false )
+		if ( s.terminal () == false )
 			return s.utility () ;
 
-		Vector actions = new Vector< int[] > () ;
+		Vector< int [] > actions = new Vector< int[] > () ;
 		actions = s.action () ;
 		int score = Integer.MIN_VALUE ;
 		int [] move = new int [ 2 ] ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
 			move = actions.get ( i ) ;
-			int temp = minvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ;
+			int temp = minvalue ( s.result (
+														s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
 			if ( temp > score )
 				score = temp ;
 		}

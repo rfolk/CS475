@@ -40,8 +40,7 @@ public class State
 								 int d , int e , int f ,
 								 int g , int h , int i )
 	{
-		content = { { a , b , c } , { d , e , f } , { g , h , i } } ;
-		/*content = new int [ 3 ] [ 3 ] ;
+		content = new int [ 3 ] [ 3 ] ;
 		content [ 0 ] [ 0 ] = a ;
 		content [ 0 ] [ 1 ] = b ;
 		content [ 0 ] [ 2 ] = c ;
@@ -50,7 +49,7 @@ public class State
 		content [ 1 ] [ 2 ] = f ;
 		content [ 2 ] [ 0 ] = g ;
 		content [ 2 ] [ 1 ] = h ;
-		content [ 2 ] [ 2 ] = i ;*/
+		content [ 2 ] [ 2 ] = i ;
 		player = 1 ;
 	}
 
