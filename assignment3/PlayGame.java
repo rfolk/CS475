@@ -10,11 +10,11 @@ public class PlayGame
 		*/
 	public static void printActions ( Vector v )
 	{
-		Iterator< int[] > itSucc = v.iterator () ;
+		Iterator< int [] > itSucc = v.iterator () ;
 
 		for ( ; itSucc.hasNext () ; )
 		{
-			int [] pair = itSucc.next() ;
+			int [] pair = itSucc.next () ;
 			System.out.println ( pair [ 0 ] + ", " + pair [ 1 ] ) ;
 		}
 	}
@@ -26,22 +26,22 @@ public class PlayGame
 	{
 		State board = new State () ;
 
-		Vector actions = new Vector< int[] > () ;
+		Vector actions = new Vector< int [] > () ;
 
-		System.out.println ( board.toString() ) ;
+		System.out.println ( board.toString () ) ;
 
-		while ( board.terminal() == false )
+		while ( board.terminal () == false )
 		{
 			System.out.println ( board.toString () ) ;
 			System.out.println ( "Player " + board.getPlayer () ) ;
-			actions = board.action() ;
-			Iterator< int[] > itSucc = actions.iterator () ;
-			printActions( actions ) ;
-			int[] a = new int [ 2 ] ;
+			actions = board.action () ;
+			Iterator< int [] > itSucc = actions.iterator () ;
+			printActions ( actions ) ;
+			int [] a = new int [ 2 ] ;
 			int player = board.getPlayer () ;
 			a = itSucc.next () ;
 			// play the first available move
-			State c = board.result ( player , a[ 0 ] , a[ 1 ] ) ;
+			State c = board.result ( player , a [ 0 ] , a [ 1 ] ) ;
 			board = c ;
 		}
 		System.out.println ( "Final ?" + board.terminal () ) ;
@@ -56,7 +56,7 @@ public class PlayGame
 
 		while ( board.terminal () == false )
 		{
-			int[] move = minimax ( board ) ;
+			int [] move = minimax ( board ) ;
 			System.out.println ( "Player: " + board.getPlayer () +
 													 "\nMove: [" + move [ 0 ] + "," + move [ 1 ] +
 													 "] => value " + move [ 2 ] ) ;
@@ -129,7 +129,27 @@ public class PlayGame
 		*/
 	public static int [] minimax ( State s )
 	{
-
+		/**
+			*	Psuedo code
+			*	return max of min(result(state,a)) of all actions
+			*/
+		Vector actions = new Vector< int[] > () ;
+		actions = s.action () ;
+		int score = Integer.MIN_VALUE ;
+		int [] best = new int [ 2 ] ;
+		int [] move = new int [ 2 ] ;
+		for ( int i = 0 ; i < actions.size () ; i ++ )
+		{
+			move = actions.get ( i ) ;
+			int temp = maxvalue (
+								 minvalue ( s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
+			if ( temp > score )
+			{
+				best = move ;
+				score = temp ;
+			}
+		}
+		return best ;
 	}
 
 	/*
