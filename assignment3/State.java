@@ -207,36 +207,36 @@ public class State
 		return 0;
 	}
 
-		//	identifying the eligible moves for the current state
-		//	returns a vector of pairs of integers, each pair specifies
-		//	a location where the player can mark
-		public Vector action ()
-		{
-			Vector actions = new Vector< int[] > () ;
+	//	identifying the eligible moves for the current state
+	//	returns a vector of pairs of integers, each pair specifies
+	//	a location where the player can mark
+	public Vector action ()
+	{
+		Vector actions = new Vector< int[] > () ;
 
-			for ( int i = 0 ; i < 3 ; i ++ )
-				for ( int j = 0 ; j < 3 ; j ++)
+		for ( int i = 0 ; i < 3 ; i ++ )
+			for ( int j = 0 ; j < 3 ; j ++)
+			{
+				int [] a = new int [ 2 ] ;
+				if ( content [ i ] [ j ] == 0 )
 				{
-					int [] a = new int [ 2 ] ;
-					if ( content [ i ] [ j ] == 0 )
-					{
-						a [ 0 ] = i ;
-						a [ 1 ] = j ;
-						actions.add ( a ) ;
-					}
+					a [ 0 ] = i ;
+					a [ 1 ] = j ;
+					actions.add ( a ) ;
 				}
+			}
 
-			return actions ;
-		}
+		return actions ;
+	}
 
-		//	display the content of a state
-		public String toString()
-		{
-			return " " + content [ 0 ] [ 0 ] + " " + content [ 0 ] [ 1 ] +
-						 " " + content [ 0 ] [ 2 ] + "\n" +
-						 " " + content [ 1 ] [ 0 ] + " " + content [ 1 ] [ 1 ] +
-						 " " + content [ 1 ] [ 2 ] + "\n" +
-						 " " + content [ 2 ] [ 0 ] + " " + content [ 2 ] [ 1 ] +
-						 " " + content [ 2 ] [ 2 ] + "\n" ;
-		}
+	//	display the content of a state
+	public String toString()
+	{
+		return " " + content [ 0 ] [ 0 ] + " " + content [ 0 ] [ 1 ] +
+					 " " + content [ 0 ] [ 2 ] + "\n" +
+					 " " + content [ 1 ] [ 0 ] + " " + content [ 1 ] [ 1 ] +
+					 " " + content [ 1 ] [ 2 ] + "\n" +
+					 " " + content [ 2 ] [ 0 ] + " " + content [ 2 ] [ 1 ] +
+					 " " + content [ 2 ] [ 2 ] + "\n" ;
+	}
 }
