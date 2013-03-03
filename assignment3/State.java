@@ -137,7 +137,7 @@ public class State
 
 		//	equal diagonal top right to bottom left
 		if ( content [ 2 ] [ 0 ] == content [ 1 ] [ 1 ] &&
-				 content [ 2 ] [ 0 ] == content [ 0 ] [ 1 ] &&
+				 content [ 2 ] [ 0 ] == content [ 0 ] [ 2 ] &&
 				 content [ 2 ] [ 0 ] != 0 )
 			return true ;
 
