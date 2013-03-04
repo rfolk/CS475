@@ -140,34 +140,32 @@ public class PlayGame
 		System.out.println ( "Value? " + board.utility () ) ;
 	}
 
-	/*
-			Implement the minimax or the alpha-beta search algorithms
-		*/
-
-	/*
-			you should implement the algorithm that will return
-			the move that the player who has the turn should
-			play - look for the description of the alpha-beta-algorithm
-			implementation in the book of note
-			int[] is only the place holder - you can change it into
-			anything you like
+	/**
+		*	Minimax
+		*
+		*	This generates a gametree that calculates every possible move recursively
+		*	to discover the move which is most beneficial to make. This will block a
+		*	move that exists and allows the opposing player to win the game as well
+		*	as win the game if a game winning move exists.
+		*
+		*	@param	s		state		the current state of the board
+		*	@return							returns the result of the serach.
+		*											move[0]: the row to make the move
+		*											move[1]: the column to make the move
+		*											move[2]: the utility cost of the move
 		*/
 	public static int [] minimax ( State s )
 	{
-		/**
-			*	Psuedo code
-			*	return max of min(result(state,a)) of all actions
-			*/
 		Vector< int [] > actions = s.action () ;
 		int [] result = new int [ 3 ] ;
+		//	start the result at "negative infinity"
 		result [ 2 ]  = Integer.MIN_VALUE ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in minimax." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
+			nodes ++ ;	//	track nodes created, used for testing
 			int [] move = actions.elementAt ( i ) ;
-			int value = minvalue ( s.result (
-														 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
+			int value   = minvalue ( s.result (
+															 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
 			if ( value > result [ 2 ] )
 			{
 				result [ 0 ] = move [ 0 ] ;
@@ -178,40 +176,46 @@ public class PlayGame
 		return result ;
 	}
 
-	/*
-			you should implement the minvalue function
-			or minvalue for alpha-beta search  - again,
-			change int[] to anything that you feel it should be
+	/**
+		*	MinValue
+		*
+		*	Recursively finds the minimum maximum value from available actions.
+		*
+		*	@param	s			state				the current state of the board
+		*	@return										the utility score of the best move
 		*/
 	public static int minvalue ( State s )
 	{
 		if ( s.terminal () == true )
 		{
+			//	if player 1, negate the result to get the MIN perspective
 			if ( s.getPlayer () == 1 )
 				return -s.utility () ;
 			return s.utility () ;
 		}
 
 		Vector< int [] > actions = s.action () ;
+		//	start score at "possitive infinity"
 		int score = Integer.MAX_VALUE ;
 		int [] move = new int [ 2 ] ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in min." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
-			move = actions.elementAt ( i ) ;
+			nodes ++ ;	//	track nodes created, used for testing
+			move  = actions.elementAt ( i ) ;
 			score = Math.min ( score,
 												 maxvalue ( s.result (
 												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ) ;
-			//System.out.println("The score for ("+move[0]+","+move[1]+") is "+score);
 		}
 		return score ;
 	}
 
-	/*
-			you should implement the maxvalue function
-			or maxvalue for alpha-beta search  - again,
-			change int[] to anything that you feel it should be
+	/**
+		*	MaxValue
+		*
+		*	Recursively finds the maximum minimum value from available actions.
+		*
+		*	@param	s			state				the current state of the board
+		*	@return										the utility score of the best move
 		*/
 	public static int maxvalue ( State s )
 	{
@@ -219,46 +223,51 @@ public class PlayGame
 		{
 			if ( s.getPlayer () == 1 )
 				return s.utility () ;
+			//	if player 2, negate the result to get MIN perspective
 			return -s.utility () ;
 		}
 
 		Vector< int [] > actions = s.action () ;
+		//	start score at "negative infinity"
 		int score = Integer.MIN_VALUE ;
 		int [] move = new int [ 2 ] ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in max." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
-			move = actions.elementAt ( i ) ;
+			nodes ++ ;	//	track nodes created, used for testing
+			move  = actions.elementAt ( i ) ;
 			score = Math.max ( score ,
 												 minvalue ( s.result (
 												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ) ;
-			//System.out.println("The score for ("+move[0]+","+move[1]+") is "+score);
 		}
 		return score ;
 	}
 
 
 	/**
+		*	Alpha-Beta Pruning
 		*
+		*	This generates a gametree that prunes the results as soon as it has found
+		*	a minimum that is lower than another branch of the subtree.
+		*
+		*	@param	s		state		the current state of the board
+		*	@return							returns the result of the serach.
+		*											move[0]: the row to make the move
+		*											move[1]: the column to make the move
+		*											move[2]: the utility cost of the move
 		*/
 	public static int [] alphabeta ( State s )
 	{
-		/**
-			*	Psuedo code
-			*	return max of min(result(state,a)) of all actions
-			*/
 		Vector< int [] > actions = s.action () ;
 		int [] result = new int [ 3 ] ;
+		//	start score at "negative infinity"
 		result [ 2 ]  = Integer.MIN_VALUE ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in minimax." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
+			nodes ++ ;	//	track nodes created, used for testing
 			int [] move = actions.elementAt ( i ) ;
-			int value = abMinValue ( s.result (
-															 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ,
-														 	 Integer.MIN_VALUE , Integer.MAX_VALUE ) ;
+			int value   = abMinValue ( s.result (
+																 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ,
+															 	 Integer.MIN_VALUE , Integer.MAX_VALUE ) ;
 			if ( value > result [ 2 ] )
 			{
 				result [ 0 ] = move [ 0 ] ;
@@ -270,7 +279,14 @@ public class PlayGame
 	}
 
 	/**
+		*	Alpha-Beta MaxValue
 		*
+		*	Recursively finds the maximum minimum value from available actions.
+		*
+		*	@param s			state				the current state of the board
+		*	@param a			alpha				the maximum value found in the chains
+		* @param b 			beta				the minimum value found in the chains
+		*	@return										the utility score of the best move
 		*/
 	public static int abMaxValue ( State s , int a , int b )
 	{
@@ -278,67 +294,65 @@ public class PlayGame
 		{
 			if ( s.getPlayer () == 1 )
 				return s.utility () ;
+			//	if player 2, negate the result to get MIN perspective
 			return -s.utility () ;
 		}
 
 		Vector< int [] > actions = s.action () ;
+		//	start score at "negative infinity"
 		int score = Integer.MIN_VALUE ;
 		int [] move = new int [ 2 ] ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in max." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
-			move = actions.elementAt ( i ) ;
+			nodes ++ ;	//	track nodes created, used for testing
+			move  = actions.elementAt ( i ) ;
 			score = Math.max ( score ,
 												 abMinValue ( s.result (
 												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ) ;
 			if ( score >= b )
-			{
-				//System.out.println ("WORKS") ;
 				return score ;
-			}
 			a = Math.max ( a , score ) ;
-			//System.out.println("The score for ("+move[0]+","+move[1]+") is "+score);
 		}
 		return score ;
 	}
 
 	/**
+		*	Alpha-Beta MinValue
 		*
+		*	Recursively finds the minimum maximum value from available actions.
+		*
+		*	@param s			state				the current state of the board
+		*	@param a			alpha				the maximum value found in the chains
+		* @param b 			beta				the minimum value found in the chains
+		*	@return										the utility score of the best move
 		*/
 	public static int abMinValue ( State s , int a , int b )
 	{
 		if ( s.terminal () == true )
 		{
+			//	if player 1, negate the result to get the MIN perspective
 			if ( s.getPlayer () == 1 )
 				return -s.utility () ;
 			return s.utility () ;
 		}
 
 		Vector< int [] > actions = s.action () ;
+		//	start score at "possitive infinity"
 		int score = Integer.MAX_VALUE ;
 		int [] move = new int [ 2 ] ;
-		//System.out.println ( "Generating "+actions.size()+" possible actions in min." ) ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
-			nodes ++ ;
-			move = actions.elementAt ( i ) ;
+			nodes ++ ;	//	track nodes created, used for testing
+			move  = actions.elementAt ( i ) ;
 			score = Math.min ( score,
 												 abMaxValue ( s.result (
 												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ) ;
 			if ( score <= a )
-			{
-				//System.out.println ("WORKS") ;
 				return score ;
-			}
 			b = Math.min ( b , score ) ;
-			//System.out.println("The score for ("+move[0]+","+move[1]+") is "+score);
 		}
 		return score ;
 	}
-
-
-
 
 	/**
 	 * @param args
