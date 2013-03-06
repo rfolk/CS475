@@ -54,7 +54,7 @@ public class PlayGame
 
 		//State board = new State ( 2 , 1 , 0 , 0 , 1 , 0 , 0 , 2 , 0 ) ;
 		nodes = 0 ;
-		State board = new State ( 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ) ;
+		State board = new State () ;
 
 		while ( board.terminal () == false )
 		{
@@ -73,8 +73,8 @@ public class PlayGame
 		System.out.println ( "\n\n\n\n" ) ;
 
 		nodes = 0 ;
-		board = new State ( 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ) ;
-		//board = new State ( 2 , 1 , 0 , 0 , 1 , 0 , 0 , 2 , 0 ) ;
+		board = new State () ;
+		board = new State ( 2 , 1 , 0 , 0 , 1 , 0 , 0 , 2 , 0 ) ;
 
 		while ( board.terminal () == false )
 		{
@@ -164,13 +164,13 @@ public class PlayGame
 		{
 			nodes ++ ;	//	track nodes created, used for testing
 			int [] move = actions.elementAt ( i ) ;
-			int value   = minvalue ( s.result (
+			int [] curr = minvalue ( s.result (
 															 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
-			if ( value > result [ 2 ] )
+			if ( curr [ 2 ] > result [ 2 ] )
 			{
 				result [ 0 ] = move [ 0 ] ;
 				result [ 1 ] = move [ 1 ] ;
-				result [ 2 ] = value ;
+				result [ 2 ] = curr [ 2 ] ;
 			}
 		}
 		return result ;
@@ -184,29 +184,35 @@ public class PlayGame
 		*	@param	s			state				the current state of the board
 		*	@return										the utility score of the best move
 		*/
-	public static int minvalue ( State s )
+	public static int [] minvalue ( State s )
 	{
 		if ( s.terminal () == true )
 		{
 			//	if player 1, negate the result to get the MIN perspective
 			if ( s.getPlayer () == 1 )
-				return -s.utility () ;
-			return s.utility () ;
+				return new int []{ -1 , -1 , -s.utility () } ;
+			return new int [] { -1 , -1 , s.utility () } ;
 		}
 
 		Vector< int [] > actions = s.action () ;
 		//	start score at "possitive infinity"
-		int score = Integer.MAX_VALUE ;
-		int [] move = new int [ 2 ] ;
+		int [] move   = new int [ 2 ] ;
+		int [] result = new int [ 3 ] ;
+		result [ 2 ]  = Integer.MAX_VALUE ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
 			nodes ++ ;	//	track nodes created, used for testing
-			move  = actions.elementAt ( i ) ;
-			score = Math.min ( score,
-												 maxvalue ( s.result (
-												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ) ;
+			move        = actions.elementAt ( i ) ;
+			int [] curr = maxvalue ( s.result (
+															 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
+			if ( curr [ 2 ] < result [ 2 ] )
+			{
+				result [ 0 ] = move [ 0 ] ;
+				result [ 1 ] = move [ 1 ] ;
+				result [ 2 ] = curr [ 2 ] ;
+			}
 		}
-		return score ;
+		return result ;
 	}
 
 	/**
@@ -217,29 +223,35 @@ public class PlayGame
 		*	@param	s			state				the current state of the board
 		*	@return										the utility score of the best move
 		*/
-	public static int maxvalue ( State s )
+	public static int [] maxvalue ( State s )
 	{
 		if ( s.terminal () == true )
 		{
 			if ( s.getPlayer () == 1 )
-				return s.utility () ;
+				return new int [] { -1 , -1 , s.utility () } ;
 			//	if player 2, negate the result to get MIN perspective
-			return -s.utility () ;
+			return new int [] { -1 , -1 , -s.utility () } ;
 		}
 
 		Vector< int [] > actions = s.action () ;
 		//	start score at "negative infinity"
-		int score = Integer.MIN_VALUE ;
-		int [] move = new int [ 2 ] ;
+		int [] move   = new int [ 2 ] ;
+		int [] result = new int [ 3 ] ;
+		result [ 2 ]  = Integer.MIN_VALUE ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
 			nodes ++ ;	//	track nodes created, used for testing
-			move  = actions.elementAt ( i ) ;
-			score = Math.max ( score ,
-												 minvalue ( s.result (
-												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ) ;
+			move        = actions.elementAt ( i ) ;
+			int [] curr = minvalue ( s.result (
+														s.getPlayer () , move [ 0 ] , move [ 1 ] ) ) ;
+			if ( curr [ 2 ] > result [ 2 ] )
+			{
+				result [ 0 ] = move [ 0 ] ;
+				result [ 1 ] = move [ 1 ] ;
+				result [ 2 ] = curr [ 2 ] ;
+			}
 		}
-		return score ;
+		return result ;
 	}
 
 
@@ -265,14 +277,14 @@ public class PlayGame
 		{
 			nodes ++ ;	//	track nodes created, used for testing
 			int [] move = actions.elementAt ( i ) ;
-			int value   = abMinValue ( s.result (
+			int [] curr = abMinValue ( s.result (
 																 s.getPlayer () , move [ 0 ] , move [ 1 ] ) ,
 															 	 Integer.MIN_VALUE , Integer.MAX_VALUE ) ;
-			if ( value > result [ 2 ] )
+			if ( curr [ 2 ] > result [ 2 ] )
 			{
 				result [ 0 ] = move [ 0 ] ;
 				result [ 1 ] = move [ 1 ] ;
-				result [ 2 ] = value ;
+				result [ 2 ] = curr [ 2 ] ;
 			}
 		}
 		return result ;
@@ -288,32 +300,38 @@ public class PlayGame
 		* @param b 			beta				the minimum value found in the chains
 		*	@return										the utility score of the best move
 		*/
-	public static int abMaxValue ( State s , int a , int b )
+	public static int [] abMaxValue ( State s , int a , int b )
 	{
 		if ( s.terminal () == true )
 		{
 			if ( s.getPlayer () == 1 )
-				return s.utility () ;
+				return new int [] { -1 , -1 , s.utility () } ;
 			//	if player 2, negate the result to get MIN perspective
-			return -s.utility () ;
+			return new int [] { -1 , -1 , -s.utility () } ;
 		}
 
 		Vector< int [] > actions = s.action () ;
 		//	start score at "negative infinity"
-		int score = Integer.MIN_VALUE ;
-		int [] move = new int [ 2 ] ;
+		int [] move   = new int [ 2 ] ;
+		int [] result = new int [ 3 ] ;
+		result [ 2 ]  = Integer.MIN_VALUE ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
 			nodes ++ ;	//	track nodes created, used for testing
-			move  = actions.elementAt ( i ) ;
-			score = Math.max ( score ,
-												 abMinValue ( s.result (
-												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ) ;
-			if ( score >= b )
-				return score ;
-			a = Math.max ( a , score ) ;
+			move        = actions.elementAt ( i ) ;
+			int [] curr = abMinValue ( s.result (
+																 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ;
+			if ( curr [ 2 ] > result [ 2 ] || curr [ 2 ] >= b )
+			{
+				result [ 0 ] = move [ 0 ] ;
+				result [ 1 ] = move [ 1 ] ;
+				result [ 2 ] = curr [ 2 ] ;
+				if ( curr [ 2 ] >= b )
+					return result ;
+			}
+			a = Math.max ( a , curr [ 2 ] ) ;
 		}
-		return score ;
+		return result ;
 	}
 
 	/**
@@ -326,32 +344,38 @@ public class PlayGame
 		* @param b 			beta				the minimum value found in the chains
 		*	@return										the utility score of the best move
 		*/
-	public static int abMinValue ( State s , int a , int b )
+	public static int [] abMinValue ( State s , int a , int b )
 	{
 		if ( s.terminal () == true )
 		{
 			//	if player 1, negate the result to get the MIN perspective
 			if ( s.getPlayer () == 1 )
-				return -s.utility () ;
-			return s.utility () ;
+				return new int [] { -1 , -1 , -s.utility () } ;
+			return new int [] { -1 , -1 , s.utility () } ;
 		}
 
 		Vector< int [] > actions = s.action () ;
 		//	start score at "possitive infinity"
-		int score = Integer.MAX_VALUE ;
-		int [] move = new int [ 2 ] ;
+		int [] move   = new int [ 2 ] ;
+		int [] result = new int [ 3 ] ;
+		result [ 2 ]  = Integer.MAX_VALUE ;
 		for ( int i = 0 ; i < actions.size () ; i ++ )
 		{
 			nodes ++ ;	//	track nodes created, used for testing
-			move  = actions.elementAt ( i ) ;
-			score = Math.min ( score,
-												 abMaxValue ( s.result (
-												 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ) ;
-			if ( score <= a )
-				return score ;
-			b = Math.min ( b , score ) ;
+			move        = actions.elementAt ( i ) ;
+			int [] curr = abMaxValue ( s.result (
+																 s.getPlayer () , move [ 0 ] , move [ 1 ] ) , a , b ) ;
+			if ( curr [ 2 ] < result [ 2 ] || curr [ 2 ] <= a )
+			{
+				result [ 0 ] = move [ 0 ] ;
+				result [ 1 ] = move [ 1 ] ;
+				result [ 2 ] = curr [ 2 ] ;
+				if ( curr [ 2 ] >= b )
+					return result ;
+			}
+			b = Math.min ( b , curr [ 2 ] ) ;
 		}
-		return score ;
+		return result ;
 	}
 
 	/**
@@ -367,7 +391,7 @@ public class PlayGame
 
 		State board = new State();
 		int[] move = minimax(board);
-		System.out.println("Move: ("+move[0]+","+move[1]+") => value " + move[2]);
+		System.out.println("Move: ("+move[0]+","+move[1]+") => value " + move[2]);*/
 
 
 		/*State board = new State(2,1,1,0,1,0,0,2,0);
@@ -375,6 +399,8 @@ public class PlayGame
 		int[] move = minvalue(board);
 		System.out.println(board.toString());
 		System.out.println("Move: ("+move[0]+","+move[1]+") => value " + move[2]);
-		*/
+		board = board.result(board.getPlayer(),move[0],move[1]) ;
+		System.out.println(board.toString());*/
+
 	}
 }
