@@ -19,8 +19,8 @@ public class Constraint {
 			op = ">=" ;
 		if ( s.indexOf ( "<=" ) > 0 )
 			op = "<=" ;
-		if ( s.indexOf ( "<=" ) > 0 )
-			op = "<=" ;
+		if ( s.indexOf ( "=>" ) > 0 )
+			op = "=>" ;
 		if ( s.indexOf ( "=<" ) > 0 )
 			op = "=<" ;
 		if ( s.indexOf ( "!=" ) > 0 )
