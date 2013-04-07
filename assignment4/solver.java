@@ -12,6 +12,10 @@ public class solver
 		stores cs = new stores ( r ) ;
 		cs.printStores () ;
 		System.out.println ( "Well defined: " + cs.well_defined () ) ;
+		if ( cs.ac3 () == true )
+			System.out.println ( "There is a solution!" ) ;
+		else
+			System.out.println ( "There is no solution!" ) ;
 	}
 
 }

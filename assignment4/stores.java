@@ -100,4 +100,169 @@ public class stores
 		return true ;
 	}
 
+	public boolean ac3 ()
+	{
+		Queue<Constraint> queue = new LinkedList<Constraint> () ;
+		Iterator<Constraint> itrC = constraints.iterator () ;
+
+		//	Add all the arcs to the queue
+		while ( itrC.hasNext () )
+		{
+			Constraint c = itrC.next () ;
+			queue.add ( c ) ;
+		}
+		int i = 1 ;
+		while ( !queue.isEmpty() )
+		{
+			Constraint current = queue.remove() ;
+			System.out.println ( "Queue is: " + queue.size () ) ;
+			if ( revised ( current ) == true )
+			{
+				Vector<Integer> currentD = new Vector<Integer> () ;
+				Iterator<Domain> itrD = domains.iterator () ;
+				while ( itrD.hasNext () )
+				{
+					Domain d = itrD.next () ;
+					if ( d.getName ().equals ( current.getFirst () ) )
+					{
+						currentD = d.getDomain () ;
+						break ;
+					}
+				}
+				if ( currentD.isEmpty() )
+					return false ;
+				queue.add ( current ) ;
+			}
+		}
+		return true ;
+	}
+
+	public boolean revised ( Constraint c )
+	{
+		boolean rev = false ;
+		String op = c.getOperation () ;
+		Domain d1 = domains.firstElement () ;
+		Domain d2 = domains.firstElement () ;
+		Iterator<Domain> itrD = domains.iterator () ;
+		boolean check ;
+		LinkedList<Integer> remove = new LinkedList<Integer> () ;
+		while ( itrD.hasNext () )
+		{
+			Domain d = itrD.next () ;
+			if ( d.getName ().equals ( c.getFirst () ) )
+				d1 = d ;
+			else if ( d.getName ().equals ( c.getSecond () ) )
+				d2 = d ;
+		}
+		domains.removeElement ( d1 ) ;
+		domains.removeElement ( d2 ) ;
+
+		System.out.println ( "Before:\n" + d1 + "\n" + d2 ) ;
+
+		Iterator<Integer> itr1 = d1.getDomain ().iterator () ;
+
+		switch ( op )
+		{
+			case "<=" :
+			case "=<" :
+				while ( itr1.hasNext () )
+				{
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						if ( num1 <= d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+			case ">=" :
+			case "=>" :
+				while ( itr1.hasNext () )
+				{
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						if ( num1 >= d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+			case "!=" :
+				while ( itr1.hasNext () )
+				{
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						if ( num1 != d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+			case "<" :
+				while ( itr1.hasNext () )
+				{
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						if ( num1 < d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+			case ">" :
+				while ( itr1.hasNext () )
+				{
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						if ( num1 > d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+			case "=" :
+				while ( itr1.hasNext () )
+				{
+					System.out.println ("in ==");
+					int num1 = itr1.next () ;
+					check = false ;
+					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
+					{
+						System.out.println ( num1 + " vs " + d2.getDomain ().elementAt ( i ) );
+						if ( num1 == d2.getDomain ().elementAt ( i ) )
+							check = true ;
+					}
+					if ( check == false )
+						remove.add ( num1 ) ;
+				}
+			break ;
+		}
+		if ( !remove.isEmpty () )
+		{
+			for ( int i = 0 ; i < remove.size () ; i ++ )
+				d1.getDomain ().removeElement ( remove.get ( i ) ) ;
+			rev = true ;
+			System.out.println ( "After:\n" + d1 + "\n" + d2 ) ;
+		}
+
+		domains.add ( d1 ) ;
+		domains.add ( d2 ) ;
+		return rev ;
+	}
+
 }
