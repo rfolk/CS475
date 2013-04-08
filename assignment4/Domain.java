@@ -27,6 +27,11 @@ public class Domain
 		}
 
 	}
+	public Domain ( String n , int d )
+	{
+		name = n ;
+		domain.add ( d ) ;
+	}
 
 	// return the variable name
 	public String getName ()

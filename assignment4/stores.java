@@ -13,6 +13,8 @@ public class stores
 	// the set of domains
 	private Vector<Domain> domains = new Vector<Domain> () ;
 
+	private Vector<Assignment> assignments = new Vector<Assignment> () ;
+
 	public stores ( reader r )
 	{
 		Iterator<String> itStore = r.getStore () .iterator () ;
@@ -35,6 +37,13 @@ public class stores
 				variables.add ( d.getName () ) ;
 			}
 		}
+	}
+
+	public stores ( Vector<Constraint> c , Vector<String> v , Vector<Domain> d )
+	{
+		constraints = c ;
+		variables   = v ;
+		domains     = d ;
 	}
 
 	// return the variables
@@ -100,6 +109,42 @@ public class stores
 		return true ;
 	}
 
+	public void assign ( Assignment a )
+	{
+		if ( domains.isEmpty () == true )
+			return ;
+		assignments.add ( a ) ;
+		Iterator<Domain> itrD = domains.iterator () ;
+		Domain d = domains.firstElement () ;
+		while ( itrD.hasNext () )
+		{
+			d = itrD.next () ;
+			if ( d.getName ().equals ( a.getVariable () ) )
+				break ;
+		}
+		domains.removeElement ( d ) ;
+		domains.add ( new Domain ( a.getVariable () , a.getValue () ) ) ;
+	}
+
+	public boolean isComplete ()
+	{
+		if ( domains.isEmpty () == true )
+			return false ;
+		Iterator<Domain> itrD = domains.iterator () ;
+		while ( itrD.hasNext () )
+		{
+			Domain d = itrD.next () ;
+			if ( d.getDomain ().size () != 1 )
+				return false ;
+		}
+		return true ;
+	}
+
+	public void emptyDomains ()
+	{
+		domains.clear () ;
+	}
+
 	public boolean ac3 ()
 	{
 		Queue<Constraint> queue = new LinkedList<Constraint> () ;
@@ -137,7 +182,7 @@ public class stores
 		return true ;
 	}
 
-	public boolean revised ( Constraint c )
+	private boolean revised ( Constraint c )
 	{
 		boolean rev = false ;
 		String op = c.getOperation () ;
