@@ -2,7 +2,7 @@ import java.io.* ;
 import java.util.* ;
 import java.lang.* ;
 
-public class stores
+public class stores implements Cloneable
 {
 	// the set of constraints
 	private Vector<Constraint> constraints = new Vector<Constraint> () ;
@@ -109,6 +109,7 @@ public class stores
 		return true ;
 	}
 
+	//	make a new assignment to a variable
 	public void assign ( Assignment a )
 	{
 		if ( domains.isEmpty () == true )
@@ -126,6 +127,7 @@ public class stores
 		domains.add ( new Domain ( a.getVariable () , a.getValue () ) ) ;
 	}
 
+	//	check if we have a complete solution
 	public boolean isComplete ()
 	{
 		if ( domains.isEmpty () == true )
@@ -140,13 +142,17 @@ public class stores
 		return true ;
 	}
 
+	//	empty the domains for an invalid solution
 	public void emptyDomains ()
 	{
 		domains.clear () ;
 	}
 
+	//	AC-3 algorithm
 	public boolean ac3 ()
 	{
+		//if ( domains.isEmpty () )
+		//	return false ;
 		Queue<Constraint> queue = new LinkedList<Constraint> () ;
 		Iterator<Constraint> itrC = constraints.iterator () ;
 
@@ -160,7 +166,6 @@ public class stores
 		while ( !queue.isEmpty() )
 		{
 			Constraint current = queue.remove() ;
-			System.out.println ( "Queue is: " + queue.size () ) ;
 			if ( revised ( current ) == true )
 			{
 				Vector<Integer> currentD = new Vector<Integer> () ;
@@ -182,8 +187,11 @@ public class stores
 		return true ;
 	}
 
+	//	revised check
 	private boolean revised ( Constraint c )
 	{
+		if ( domains.isEmpty () )
+			return false ;
 		boolean rev = false ;
 		String op = c.getOperation () ;
 		Domain d1 = domains.firstElement () ;
@@ -201,8 +209,8 @@ public class stores
 		}
 		domains.removeElement ( d1 ) ;
 		domains.removeElement ( d2 ) ;
-
-		System.out.println ( "Before:\n" + d1 + "\n" + d2 ) ;
+		d1.printDomain () ;
+		d2.printDomain () ;
 
 		Iterator<Integer> itr1 = d1.getDomain ().iterator () ;
 
@@ -283,12 +291,10 @@ public class stores
 			case "=" :
 				while ( itr1.hasNext () )
 				{
-					System.out.println ("in ==");
 					int num1 = itr1.next () ;
 					check = false ;
 					for ( int i = 0 ; i < d2.getDomain ().size () ; i ++ )
 					{
-						System.out.println ( num1 + " vs " + d2.getDomain ().elementAt ( i ) );
 						if ( num1 == d2.getDomain ().elementAt ( i ) )
 							check = true ;
 					}
@@ -302,12 +308,16 @@ public class stores
 			for ( int i = 0 ; i < remove.size () ; i ++ )
 				d1.getDomain ().removeElement ( remove.get ( i ) ) ;
 			rev = true ;
-			System.out.println ( "After:\n" + d1 + "\n" + d2 ) ;
 		}
 
 		domains.add ( d1 ) ;
 		domains.add ( d2 ) ;
 		return rev ;
+	}
+
+	protected Object clone ()  throws CloneNotSupportedException
+	{
+		return super.clone();
 	}
 
 }
