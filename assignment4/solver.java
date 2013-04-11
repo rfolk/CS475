@@ -27,11 +27,11 @@ public class solver
 	public static void BackTrack ( stores s )
 	{
 		//	shrink the domain first to get the smallest domain set to start issuing assignments
-		//s.ac3 () ;
+		s.ac3 () ;
 		Vector<Constraint> constraints = s.getConstraints () ;
 		Vector<String>     variables   = s.getVariables () ;
 		Vector<Domain>     domains     = s.getDomains () ;
-
+		stores sNew =  new stores ( constraints , variables , domains ) ;
 		Domain d = domains.firstElement () ;
 
 		Iterator<Integer> itrD = d.getDomain ().iterator () ;
@@ -39,16 +39,12 @@ public class solver
 		while ( itrD.hasNext () )
 		{
 			int val    = itrD.next () ;
-			try
-			{
-				stores res = backTrackRec ( ( stores ) s.clone () , new Assignment ( d.getName () , val ) ) ;
-				if ( res.isComplete () == true )
-					printResults ( res ) ;
-			}
-			catch ( Exception e )
-			{
-				e.printStackTrace () ;
-			}
+			System.out.println ( "We are assigning: " + val + " to " + d.getName () ) ;
+			Assignment assign = new Assignment ( d.getName () , val ) ;
+
+			stores res = backTrackRec ( sNew , assign ) ;
+			if ( res.isComplete () == true )
+				printResults ( res ) ;
 		}
 	}
 
@@ -60,15 +56,16 @@ public class solver
 		*
 		*	@param	s	complete CSP state
 		*	@param	a	new assignment to make
-		*	@return		a completely valid solution or a no solution
+		*	@return	a completely valid solution or a no solution
 		*/
 	public static stores backTrackRec ( stores s , Assignment a )
 	{
 		s.assign ( a ) ;
 		//	This is a valid solution, return it
+		s.ac3 () ;
+		stores sNew = new stores ( s.getConstraints () , s.getVariables () , s.getDomains () ) ;
 		if ( s.isComplete () == true )
 			return s ;
-		s.ac3 () ;
 		//if ( s.ac3() == true )
 		//{
 			//	make all the next assignments and go again
@@ -82,14 +79,9 @@ public class solver
 					while ( itr2.hasNext () )
 					{
 						int val = itr2.next () ;
-						try
-						{
-							return backTrackRec ( ( stores ) s.clone () , new Assignment ( d.getName () , val ) ) ;
-						}
-						catch ( Exception e )
-						{
-							e.printStackTrace () ;
-						}
+						Assignment assign = new Assignment ( d.getName () , val ) ;
+						System.out.println ( "We are assigning: " + val + " to " + d.getName () ) ;
+						return backTrackRec ( sNew , assign ) ;
 					}
 				}
 			}

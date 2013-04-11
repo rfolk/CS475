@@ -2,7 +2,7 @@ import java.io.* ;
 import java.util.* ;
 import java.lang.* ;
 
-public class stores implements Cloneable
+public class stores
 {
 	// the set of constraints
 	private Vector<Constraint> constraints = new Vector<Constraint> () ;
@@ -208,7 +208,6 @@ public class stores implements Cloneable
 				d2 = d ;
 		}
 		domains.removeElement ( d1 ) ;
-		domains.removeElement ( d2 ) ;
 		d1.printDomain () ;
 		d2.printDomain () ;
 
@@ -311,13 +310,7 @@ public class stores implements Cloneable
 		}
 
 		domains.add ( d1 ) ;
-		domains.add ( d2 ) ;
 		return rev ;
-	}
-
-	protected Object clone ()  throws CloneNotSupportedException
-	{
-		return super.clone();
 	}
 
 }

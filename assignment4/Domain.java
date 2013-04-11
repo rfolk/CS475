@@ -31,6 +31,7 @@ public class Domain
 	{
 		name = n ;
 		domain.add ( d ) ;
+		System.out.println ( domain.size () ) ;
 	}
 
 	// return the variable name
